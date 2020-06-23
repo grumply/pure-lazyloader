@@ -11,7 +11,7 @@ newtype Lazyloader key view response = Lazyloader { lazyloader :: Loader key vie
 
 instance (Eq key, Typeable key, Typeable view, Typeable response) => Pure (Lazyloader key view response) where
     view = 
-        ComponentIO $ \self ->
+        Component $ \self ->
             let
                 load = modify_ self $ \_ _ -> True
             in
