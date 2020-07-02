@@ -1,10 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Pure.Lazyloader where
+module Pure.Lazyloader (module Pure.Lazyloader, module Pure.Loader) where
 
-import Pure hiding (Visibility)
-import Pure.Visibility
+import Pure
+import Pure.Intersection as I
 import Pure.Loader
 
+import Control.Monad (when)
+import Data.List as List
 import Data.Typeable
 
 newtype Lazyloader key view response = Lazyloader { lazyloader :: Loader key view response }
@@ -20,6 +22,7 @@ instance (Eq key, Typeable key, Typeable view, Typeable response) => Pure (Lazyl
                     , Pure.render = \l onscreen -> 
                         if onscreen 
                           then View (lazyloader l)
-                          else Visibility def <| OnOnScreen (Just $ const load) |> 
-                                  [ Div <| Display "inline" . Height (pxs 1) . Width (pxs 1) ]
+                          else Observer def 
+                                 <| I.Threshold [0] 
+                                  . I.Action (\ts -> when (List.any I.intersecting ts) load)
                     }

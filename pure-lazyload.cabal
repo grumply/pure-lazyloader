@@ -17,7 +17,7 @@ library
   build-depends:
     base,
     pure,
-    pure-visibility,
+    pure-intersection,
     pure-loader
 
   hs-source-dirs: src
